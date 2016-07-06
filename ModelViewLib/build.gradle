@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 23
@@ -27,9 +28,32 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
 }
 
-def siteUrl = 'https://github.com/ahammer/ModelViewLib'      // Homepage URL of the library
-def gitUrl = 'https://github.com/ahammer/ModelViewLib.git'   // Git repository URL
-group = "com.mysaasa"                                          // Maven Group ID for the artifact
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'model-view-library'
+ 
+    publishedGroupId = 'com.mysaasa'
+    libraryName = 'model-view-library'
+    artifact = 'model-view-library'
+ 
+    libraryDescription = 'Model View Library'
+ 
+    siteUrl = 'https://github.com/ahammer/ModelViewLib'
+    gitUrl = 'https://github.com/ahammer/ModelViewLib.git'
+ 
+    libraryVersion = '0.1.0'
+ 
+    developerId = 'ahammer'
+    developerName = 'Adam Hammer'
+    developerEmail = 'adamhammer2@gmail.com'
+ 
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId                               // Maven Group ID for the artifact
 
 install {
     repositories.mavenInstaller {
@@ -37,87 +61,95 @@ install {
         pom {
             project {
                 packaging 'aar'
+                groupId publishedGroupId
+                artifactId artifact
 
                 // Add your description here
-                name 'model-view-lib'
-                description = 'A library to help build model backed views'
+                name libraryName
+                description libraryDescription
                 url siteUrl
-		
-		inceptionYear '2016'
-		groupId 'com.mysaasa'
-		artifactId 'model-view-lib'
-		version '0.1'
 
                 // Set your license
                 licenses {
                     license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name licenseName
+                        url licenseUrl
                     }
                 }
                 developers {
                     developer {
-                        id 'ahammer'
-                        name 'Adam Hammer'
-                        email 'adamhammer2@gmail.com@gmail.com'
+                        id developerId
+                        name developerName
+                        email developerEmail
                     }
                 }
                 scm {
                     connection gitUrl
                     developerConnection gitUrl
                     url siteUrl
+
                 }
             }
         }
     }
 }
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
 
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+version = libraryVersion
+
+if (project.hasProperty("android")) { // Android libraries
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+} else { // Java libraries
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
 artifacts {
     archives javadocJar
     archives sourcesJar
 }
 
+// Bintray
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-// https://github.com/bintray/gradle-bintray-plugin
 bintray {
+
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
-
+    
     configurations = ['archives']
     pkg {
-        repo = "maven"
-        // it is the name that appears in bintray when logged
-        name = "model-view-library"
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
         websiteUrl = siteUrl
         vcsUrl = gitUrl
-        licenses = ["Apache-2.0"]
+        licenses = allLicenses
         publish = true
-	
+        publicDownloadNumbers = true
         version {
-	  name = '0.1.0'
-	  desc = 'Model View Library'
-	  released = new Date()
-          gpg {
-		sign = true
+            desc = libraryDescription
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
 		passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-	  }
-      }        
+                //Optional. The passphrase for GPG signing'
+            }
+        }
     }
 }
-
