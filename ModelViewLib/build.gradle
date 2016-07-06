@@ -39,7 +39,7 @@ install {
                 packaging 'aar'
 
                 // Add your description here
-                name 'com.mysaasa.modelimageview:model-image-view'
+                name 'model-image-view'
                 description = 'A library to help build model backed views'
                 url siteUrl
 
@@ -103,13 +103,16 @@ bintray {
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
         publish = true
-	/*
+	
         version {
+	  name = '0.1.0'
+	  desc = 'Model View Library'
+	  released = new Date()
           gpg {
-              sign = true //Determines whether to GPG sign the files. The default is false
-              passphrase = properties.getProperty("bintray.gpg.password") //Optional. The passphrase for GPG signing'
-          }
-      }*/        
+		sign = true
+		passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
+	  }
+      }        
     }
 }
 
