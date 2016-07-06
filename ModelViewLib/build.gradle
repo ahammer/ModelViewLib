@@ -39,9 +39,14 @@ install {
                 packaging 'aar'
 
                 // Add your description here
-                name 'model-image-view'
+                name 'model-view-lib'
                 description = 'A library to help build model backed views'
                 url siteUrl
+		
+		inceptionYear '2016'
+		groupId 'com.mysaasa'
+		artifactId 'model-view-lib'
+		version '0.1'
 
                 // Set your license
                 licenses {
@@ -98,7 +103,7 @@ bintray {
     pkg {
         repo = "maven"
         // it is the name that appears in bintray when logged
-        name = "model-image-view"
+        name = "model-view-library"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
