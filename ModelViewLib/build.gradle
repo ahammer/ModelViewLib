@@ -98,7 +98,7 @@ bintray {
     pkg {
         repo = "maven"
         // it is the name that appears in bintray when logged
-        name = "com.mysaasa.modelimageview:model-image-view"
+        name = "model-image-view"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
