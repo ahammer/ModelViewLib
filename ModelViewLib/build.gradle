@@ -31,11 +31,11 @@ dependencies {
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'model-view-library'
+    bintrayName = 'ModelViewLib'
  
     publishedGroupId = 'com.mysaasa'
-    libraryName = 'model-view-library'
-    artifact = 'model-view-library'
+    libraryName = 'ModelViewLib'
+    artifact = 'ModelViewLib'
  
     libraryDescription = 'Model View Library'
  
